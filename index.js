@@ -24,6 +24,21 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+const parseDate = (input) => {
+  if (!input) return new Date(); // Si el input està vacio, devuelve la fecha actual
+  return isNaN(input) ? new Date(input) : new Date(parseInt(input)); // Si el input no es un entero, devuelve un string de fecha, caso contrario devuelve un timestamp Unix
+};
+
+// Separo las dos funciones para mayor claridad y modularidad
+
+app.get('/api/:date_string?', (req, res) => {
+  const date = parseDate(req.params.date_string);
+  res.json(
+    isNaN(date.getTime())
+      ? { error: "Invalid Date" } // Si la fecha es invalida, devuelve un error
+      : { unix: date.getTime(), utc: date.toUTCString() } // Si la fecha es un entero, devuelve un objeto con el timestamp Unix y la fecha en utc
+  );
+});
 
 
 // Listen on port set in environment variable or default to 3000
